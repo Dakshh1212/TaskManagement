@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task List</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<body>
+<div class="navbar">
+    <a th:href="@{/logout}">Logout</a>
+
+    <h1>Task Manager</h1>
+    <div>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/tasks/new}">Add Task</a>
+        <a th:href="@{/tasks/view}">View Tasks</a>
+
+    </div>
+</div>
+
+<div class="container">
+    <h2>All Tasks</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Priority</th>
+            <th>Completed</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${tasks}"
+            th:classappend="(${task.priority} == 'High') ? 'priority-high' :
+                    ((${task.priority} == 'Medium') ? 'priority-medium' : 'priority-low')">
+
+            <td th:text="${task.title}"></td>
+            <td th:text="${task.description}"></td>
+            <td th:text="${#temporals.format(task.dueDate, 'dd MMM yyyy')}"></td>
+
+
+            <td th:text="${task.priority}"></td>
+            <td>
+                <span th:text="${task.completed} ? '✅ Yes' : '❌ No'"></span>
+            </td>
+            <td>
+                <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✏️ Edit</a> |
+                <a th:href="@{/tasks/delete/{id}(id=${task.id})}" onclick="return confirm('Delete this task?')">🗑 Delete</a> |
+                <a th:if="${!task.completed}" th:href="@{/tasks/complete/{id}(id=${task.id})}">✔️ Mark Complete</a>
+            </td>
+        </tr>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

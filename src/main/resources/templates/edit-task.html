@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/style.css">
+
+<head>
+    <title>Edit Task</title>
+</head>
+<body>
+<h1>Edit Task</h1>
+
+<form th:action="@{/tasks/update/{id}(id=${task.id})}" th:object="${task}" method="post">
+    <label>Title:</label>
+    <input type="text" th:field="*{title}" required><br><br>
+
+    <label>Description:</label>
+    <textarea th:field="*{description}"></textarea><br><br>
+
+    <label>Due Date:</label>
+    <input type="date" th:field="*{dueDate}"><br><br>
+
+    <label>Priority:</label>
+    <select th:field="*{priority}">
+        <option value="LOW" th:selected="${task.priority=='LOW'}">Low</option>
+        <option value="MEDIUM" th:selected="${task.priority=='MEDIUM'}">Medium</option>
+        <option value="HIGH" th:selected="${task.priority=='HIGH'}">High</option>
+    </select><br><br>
+
+    <button type="submit">Update Task</button>
+</form>
+
+<a href="/tasks/view">⬅ Back to Task List</a>
+</body>
+</html>
