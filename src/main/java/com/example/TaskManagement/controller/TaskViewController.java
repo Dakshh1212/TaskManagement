@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tasks")
@@ -26,45 +27,44 @@ public class TaskViewController {
         return (User) session.getAttribute("loggedInUser");
     }
 
-    // Show all tasks of the logged-in user
     @GetMapping("/view")
     public String viewTasks(Model model, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
 
         User user = getLoggedInUser(session);
-        List<Task> tasks = taskRepository.findByUser(user);
+        List<Task> tasks = taskRepository.findByUser(user)
+                .stream()
+                .sorted((t1, t2) -> {
+                    if (t1.getReminderDate() == null) return 1;
+                    if (t2.getReminderDate() == null) return -1;
+                    return t1.getReminderDate().compareTo(t2.getReminderDate());
+                })
+                .collect(Collectors.toList());
 
         model.addAttribute("tasks", tasks);
-        model.addAttribute("task", new Task()); // 🆕 Add blank task for form
+        model.addAttribute("task", new Task());
         return "tasks";
     }
 
-
-    // Show form for new task
     @GetMapping("/new")
     public String createTaskForm(Model model, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         model.addAttribute("task", new Task());
         return "create-task";
     }
 
-    // Save new task with logged-in user
     @PostMapping("/save")
     public String saveTask(@ModelAttribute("task") Task task, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         User user = getLoggedInUser(session);
-        task.setUser(user);  // Associate task with user
+        task.setUser(user);
         taskRepository.save(task);
         return "redirect:/tasks/view";
     }
 
-    // Edit task (only if it belongs to logged-in user)
     @GetMapping("/edit/{id}")
     public String editTaskForm(@PathVariable Long id, Model model, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         User user = getLoggedInUser(session);
         Task task = taskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
@@ -73,49 +73,39 @@ public class TaskViewController {
         return "edit-task";
     }
 
-    // Update task (only if it belongs to logged-in user)
     @PostMapping("/update/{id}")
     public String updateTask(@PathVariable Long id, @ModelAttribute("task") Task task, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         User user = getLoggedInUser(session);
         Task existingTask = taskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Task not found or access denied"));
-
         task.setId(id);
         task.setUser(user);
         taskRepository.save(task);
         return "redirect:/tasks/view";
     }
 
-    // Delete task (only if it belongs to logged-in user)
     @GetMapping("/delete/{id}")
     public String deleteTask(@PathVariable Long id, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         User user = getLoggedInUser(session);
         Task task = taskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Task not found or access denied"));
-
         taskRepository.delete(task);
         return "redirect:/tasks/view";
     }
 
-    // Mark task as complete ✅ (only if it belongs to logged-in user)
     @GetMapping("/complete/{id}")
     public String completeTask(@PathVariable Long id, HttpSession session) {
         if (!isLoggedIn(session)) return "redirect:/login";
-
         User user = getLoggedInUser(session);
         Task task = taskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Task not found or access denied"));
-
         task.setCompleted(true);
         taskRepository.save(task);
         return "redirect:/tasks/view";
-
     }
 }

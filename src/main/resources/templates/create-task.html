@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/style.css">
-
 <head>
     <title>Create Task</title>
 </head>
@@ -24,6 +23,9 @@
         <option value="MEDIUM">Medium</option>
         <option value="HIGH">High</option>
     </select><br><br>
+
+    <label>Reminder Date:</label>
+    <input type="date" th:field="*{reminderDate}"><br><br>
 
     <button type="submit">Save Task</button>
 </form>

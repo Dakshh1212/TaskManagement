@@ -18,79 +18,43 @@ public class Task {
 
     private boolean completed = false;
 
-    private LocalDate dueDate;   // Due Date
+    private LocalDate dueDate;
 
-    private String priority;     // Priority (LOW, MEDIUM, HIGH)
+    private String priority;
+
+    private LocalDate reminderDate; // ✅ Reminder date
 
     private String email;
 
-    // 🆕 Link task to user
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // ----- Getters & Setters -----
-    public Long getId() {
-        return id;
-    }
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
 
-    public String getDescription() {
-        return description;
-    }
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
 
-    public boolean isCompleted() {
-        return completed;
-    }
+    public LocalDate getReminderDate() { return reminderDate; }
+    public void setReminderDate(LocalDate reminderDate) { this.reminderDate = reminderDate; }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }
